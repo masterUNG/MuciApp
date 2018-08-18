@@ -16,29 +16,58 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import masterung.androidthai.in.th.muciapp.NotificaionActivity;
 import masterung.androidthai.in.th.muciapp.R;
+import masterung.androidthai.in.th.muciapp.utility.MyConstant;
+import masterung.androidthai.in.th.muciapp.utility.ReadAllData;
 
 public class MainFragment extends Fragment{
 
     //    Explicit
     private Handler handler = new Handler();
-    private int timesAnInt = 0;
+    private boolean resultABoolean = false;
     private  Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            timesAnInt += 1;
-            Log.d("18AugV1", "time ==> " + timesAnInt);
-            if (timesAnInt == 10) {
+
+            checkResult();
+
+            if (resultABoolean) {
                 myNotification();
+            } else {
+                handler.postDelayed(runnable, 1000);
             }
 
-            handler.postDelayed(runnable, 1000);
+
 
         }
     };
 
+    private void checkResult() {
+
+        try {
+
+            MyConstant myConstant = new MyConstant();
+            ReadAllData readAllData = new ReadAllData(getActivity());
+            readAllData.execute(myConstant.getUrlTestString());
+            String jsonString = readAllData.get();
+            Log.d("18AugV1", "JSON ==> " + jsonString);
+
+            JSONArray jsonArray = new JSONArray(jsonString);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            String resultString = jsonObject.getString("Result");
+            resultABoolean = Boolean.parseBoolean(resultString);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -46,7 +75,26 @@ public class MainFragment extends Fragment{
 
         handler.postDelayed(runnable, 1000);
 
+//        Register Controller
+        registerController();
+
+
     }   // Main Method
+
+    private void registerController() {
+        Button button = getView().findViewById(R.id.btnRegister);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.contentFragmentMain, new RegisterFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+    }
 
     private void myNotification() {
 
