@@ -17,21 +17,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import masterung.androidthai.in.th.muciapp.NotificaionActivity;
 import masterung.androidthai.in.th.muciapp.R;
+import masterung.androidthai.in.th.muciapp.utility.MyAlert;
 import masterung.androidthai.in.th.muciapp.utility.MyConstant;
 import masterung.androidthai.in.th.muciapp.utility.ReadAllData;
 
-public class MainFragment extends Fragment{
+public class MainFragment extends Fragment {
 
     //    Explicit
     private Handler handler = new Handler();
     private boolean resultABoolean = false;
-    private  Runnable runnable = new Runnable() {
+    private Runnable runnable = new Runnable() {
         @Override
         public void run() {
 
@@ -42,7 +47,6 @@ public class MainFragment extends Fragment{
             } else {
                 handler.postDelayed(runnable, 1000);
             }
-
 
 
         }
@@ -78,8 +82,74 @@ public class MainFragment extends Fragment{
 //        Register Controller
         registerController();
 
+//        Login Controller
+        loginController();
 
     }   // Main Method
+
+    private void loginController() {
+        Button button = getView().findViewById(R.id.btnLogin);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                EditText userEditText = getView().findViewById(R.id.edtUser);
+                EditText passwordEditText = getView().findViewById(R.id.edtPassword);
+
+                String userString = userEditText.getText().toString().trim();
+                String passwordString = passwordEditText.getText().toString().trim();
+
+                MyAlert myAlert = new MyAlert(getActivity());
+                MyConstant myConstant = new MyConstant();
+                String[] columnStrings = myConstant.getColumn_tm_client();
+                ArrayList<String> stringArrayList = new ArrayList<>();
+                boolean loginBool = true;
+
+                if (userString.isEmpty() || passwordString.isEmpty()) {
+                    myAlert.normalDialog("Have Space",
+                            "Please Fill Every Blank");
+                } else {
+
+                    try {
+
+                        ReadAllData readAllData = new ReadAllData(getActivity());
+                        readAllData.execute(myConstant.getUrlReadAllUser());
+                        String jsonString = readAllData.get();
+                        Log.d("19AugV1", "JSON ==> " + jsonString);
+
+                        JSONArray jsonArray = new JSONArray(jsonString);
+                        for (int i=0; i<jsonArray.length(); i+=1) {
+
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            if (userString.equals(jsonObject.getString(columnStrings[3]))) {
+                                loginBool = false;
+                                for (int i1=0; i1 < columnStrings.length; i1 += 1) {
+                                    stringArrayList.add(jsonObject.getString(columnStrings[i1]));
+                                }   // for
+                            }   // if
+
+                        }   // for
+
+                        if (loginBool) {
+                            myAlert.normalDialog("User False",
+                                    "No " + userString + " in my Database");
+                        } else if (passwordString.equals(stringArrayList.get(4))) {
+                            Toast.makeText(getActivity(), "Welcome " + stringArrayList.get(1),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            myAlert.normalDialog("Password False",
+                                    "Please Try Again");
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+        });
+    }
 
     private void registerController() {
         Button button = getView().findViewById(R.id.btnRegister);
@@ -117,9 +187,6 @@ public class MainFragment extends Fragment{
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(0, notification);
-
-
-
 
 
     }
