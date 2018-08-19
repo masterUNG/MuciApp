@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Muci App</string>
+
+    <string name="open">Open Drawer</string>
+    <string name="close">Close Drawer</string>
+
 </resources>
