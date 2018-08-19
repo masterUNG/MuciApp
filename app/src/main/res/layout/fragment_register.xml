@@ -19,6 +19,7 @@
 
         <!--First-->
         <EditText
+            android:id="@+id/edtName"
             android:background="@drawable/textfield_name"
             android:textSize="@dimen/h3"
             android:hint="First Name :"
@@ -28,6 +29,7 @@
 
         <!--Last-->
         <EditText
+            android:id="@+id/edtLastName"
             android:background="@drawable/textfield_surname"
             android:textSize="@dimen/h3"
             android:hint="Last Name :"
@@ -37,6 +39,7 @@
 
         <!--Email-->
         <EditText
+            android:id="@+id/edtEmail"
             android:background="@drawable/textfield_email"
             android:textSize="@dimen/h3"
             android:hint="Email :"
@@ -46,6 +49,7 @@
 
         <!--Phone-->
         <EditText
+            android:id="@+id/edtPhone"
             android:background="@drawable/textfield_phone"
             android:textSize="@dimen/h3"
             android:hint="Phone :"
@@ -55,6 +59,7 @@
 
         <!--User-->
         <EditText
+            android:id="@+id/edtUser"
             android:background="@drawable/textfield_user"
             android:textSize="@dimen/h3"
             android:hint="User :"
@@ -64,6 +69,7 @@
 
         <!--Password-->
         <EditText
+            android:id="@+id/edtPassword"
             android:background="@drawable/textfield_password"
             android:textSize="@dimen/h3"
             android:hint="Password :"
