@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import masterung.androidthai.in.th.muciapp.R;
+import masterung.androidthai.in.th.muciapp.utility.AddNewUser;
 import masterung.androidthai.in.th.muciapp.utility.MyAlert;
+import masterung.androidthai.in.th.muciapp.utility.MyConstant;
 
 public class RegisterFragment extends Fragment {
 
@@ -45,6 +48,7 @@ public class RegisterFragment extends Fragment {
                 String passwordString = passwordEditText.getText().toString().trim();
 
                 MyAlert myAlert = new MyAlert(getActivity());
+                MyConstant myConstant = new MyConstant();
 
                 if (nameString.isEmpty() || lastNameString.isEmpty() ||
                         emailString.isEmpty() || phoneString.isEmpty() ||
@@ -53,6 +57,26 @@ public class RegisterFragment extends Fragment {
                                 "Please Fill Every Blank");
                 } else {
 //                    Non Space
+                    try {
+
+                        AddNewUser addNewUser = new AddNewUser(getActivity());
+                        addNewUser.execute(nameString, lastNameString,
+                                userString, passwordString, emailString, phoneString,
+                                myConstant.getUrlAddNewUser());
+                        String resultString = addNewUser.get();
+                        Log.d("19AugV1", "Result ==> " + resultString);
+
+                        if (Boolean.parseBoolean(resultString)) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        } else {
+                            myAlert.normalDialog("Cannot Register",
+                                    "Please Try Again");
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                 }
 
